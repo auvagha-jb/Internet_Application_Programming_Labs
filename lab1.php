@@ -1,46 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!--CSS Stylesheets-->
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/dataTables.bootstrap4.css">
-    <link rel="stylesheet" href="css/datatables.min.css">
-    <link rel="stylesheet" href="css/materialize.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <!--JS Scripts-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/materialize.js"></script>
-    <script src="js/jquery.dataTables.min.js"></script>
-    <script src="js/dataTables.bootstrap4.js"></script>
-    <script src="js/datatables.min.js"></script>
-    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="assets/materialize/materialize.css">
+    <link rel="stylesheet" href="assets/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="assets/datatables/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <!----JS Scripts---->
+    <!-- Plugins -->
+    <script src="assets/jquery/jquery.min.js"></script>
+    <script src="assets/materialize/materialize.js"></script>
+    <!-- DataTables -->
+    <script src="assets/bootstrap/bootstrap.min.js"></script>
+    <script src="assets/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="assets/datatables/js/dataTables.bootstrap4.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+    <!-- Title -->
     <title>Users</title>
 </head>
 
 <body class="users-page">
-    <center class="alert alert-success fixed-top d-none"  id="page-feedback"></center>
+    <center class="alert alert-success fixed-top d-none" id="page-feedback"></center>
 
     <!--Navigation bar-->
-    <div class="navbar-fixed">
-        <nav class="black">
-            <div class="nav-wrapper">
-                <a href="#!" class="brand-logo" id="brand-name" style="padding-left: 3%;">Labs</a>
-                <!-- <ul class="right hide-on-med-and-down">
-                    <li><a href="sass.html">Sass</a></li>
-                    <li><a href="badges.html">Components</a></li>
-                </ul> -->
-            </div>
-        </nav>
-    </div>
+    <nav class="black">
+        <div class="nav-wrapper">
+            <a href="#!" class="brand-logo" id="brand-name" style="padding-left: 3%;">Labs</a>
+        </div>
+    </nav>
+
 
     <div class="container">
         <div class="row">
             <!--Add users form-->
-            <div class="col s12 l5" style="">
+            <div class="col s12 l5" style="margin-top:10%;">
                 <form method="post" action="model/Forms.php" id="add-user" class="white">
                     <p class="lead">Add user</>
                         <div class="input-field">
@@ -69,13 +67,10 @@
                         </tr>
                     </thead>
                 </table>
-
             </div>
 
         </div>
-
     </div>
-
 </body>
 
 </html>

@@ -1,0 +1,4 @@
+Excluded JS and css 
+<script src="assets/datatables/js/datatables.min.js"></script>    
+<!-- <link rel="stylesheet" href="assets/datatables/css/jquery.dataTables.min.css"> -->
+    <!-- <link rel="stylesheet" href="assets/datatables/css/datatables.min.css"> -->
