@@ -5,3 +5,7 @@
 .users-page #page-feedback {
     margin-top: 50px;
 }
+
+.form-errors {
+    color: red;
+}

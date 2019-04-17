@@ -19,11 +19,13 @@ class User implements Crud
         $this->db = new DBConnector;
     }
 
-    public function setUserId($user_id){
+    public function setUserId($user_id)
+    {
         $this->user_id = $user_id;
     }
 
-    public function getUserId(){
+    public function getUserId()
+    {
         return $this->user_id;
     }
 
@@ -44,7 +46,8 @@ class User implements Crud
         return $stmt->execute();
     }
 
-    public function readAll($table){
+    public function readAll($table)
+    {
         $conn = $this->db->conn;
         $query = "SELECT * FROM " . $table;
 
@@ -53,6 +56,28 @@ class User implements Crud
         $result = $stmt->get_result();
 
         return $result;
+    }
+
+    public function validateForm()
+    {
+        $input_field = array(
+            "fname" => $this->first_name,
+            "lname" => $this->last_name,
+            "city" => $this->city_name,
+        );
+
+        foreach ($input_field as $name => $input) {
+            if ($input == "") {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function createFormErrorSessions()
+    {
+        session_start();
+        $_SESSION['form_errors'] = "All fields are required";
     }
 
     /**

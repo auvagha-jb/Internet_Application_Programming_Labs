@@ -8,14 +8,35 @@ $(function () {
             url = form.attr('action'),
             data = get_form_data(form);
 
-        ajax_form_submit(url,data).then(data => {
-            document.getElementById(form_id).reset();
-            displayAlert(data.msg,"success");
-            add_user_table.ajax.reload();
-        });
+        //Form validation
+        if (validateForm()) {
+            ajax_form_submit(url,data).then(data => {
+                document.getElementById(form_id).reset();
+                displayAlert(data.msg,"success");
+                add_user_table.ajax.reload();
+            });
+        } else {
+            displayAlert("Some fields are empty","danger");
+        }
     });
 
+    /**
+     * Ensures the form inputs are not null
+     */
+    function validateForm() {
+        var input = {
+            fname: document.forms["user_details"]["first_name"].value,
+            lname: document.forms["user_details"]["last_name"].value,
+            city: document.forms["user_details"]["city_name"].value,
+        }
 
+        for (let key in input) {
+            if (input[key] == "") {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * The users table
@@ -88,13 +109,22 @@ $(function () {
     * @returns {jqXHR}
     */
     function ajax_form_submit(url,data = null) {
+        let btn = $('.submit-btn');
         let promise = $.ajax({
             url: url, // Url to which the request is send
             method: 'POST',
-            dataType: "JSON",
+            dataType: "JSON", //The format in which we expect the response 
+            beforeSend: function () {
+                btn.attr('disabled',true);
+                btn.html('Please wait...');
+            },
             data: data,
             error: function (xhr,textStatus,errorThrown) {
                 console.error(xhr.responseText);
+            },
+            success: function () {
+                btn.attr('disabled',false);
+                btn.html('Save');
             }
         });
 
@@ -122,7 +152,7 @@ $(function () {
 
     /**
      * Gets the current class that is assigned to the alert div
-     * @param {string} target 
+     * @param {string} target jQuery selector 
      */
     function getClass(target) {
         let classes = ['alert-success','alert-danger','alert-warning'];

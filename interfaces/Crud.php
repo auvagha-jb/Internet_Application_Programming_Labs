@@ -14,4 +14,10 @@ interface Crud {
      public function removeOne();
      public function removeAll();
 
+    /**
+     * Added in lab 2
+     */
+    public function validateForm();
+    public function createFormErrorSessions();
+
 }
