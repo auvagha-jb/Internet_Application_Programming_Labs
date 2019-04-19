@@ -14,14 +14,14 @@ $(function () {
             let input = $('#username');
             (!data.status && input.val() !== "") ? input.addClass('invalid') : input.removeClass('invalid');
             validate_obj.username = data.status;
-            console.log(form_data);
 
+            //Ensure all fields are filled
             if (!validateForm()) {
                 displayAlert("Some fields are empty","danger");
-            } else if (!validate_obj.username) {
 
-            }
-            else {
+                //Ensure the username is unique
+            } else if (validate_obj.username) {
+
                 ajax_form_submit(url,form_data).then(data => {
                     document.getElementById(form_id).reset();
                     displayAlert(data.msg,"success");
@@ -88,6 +88,7 @@ $(function () {
         ]);
 
 
+    /* Helper functions */
 
     /**
      * Initialize datatables plugin
@@ -113,8 +114,6 @@ $(function () {
         })
     }
 
-
-    /* Helper functions */
     /**
      * Gets the data for each from element with attribute 'name'
      * @param {object} form 

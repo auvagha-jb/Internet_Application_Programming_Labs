@@ -18,7 +18,6 @@ try {
             }
         }
 
-        //Display table if the data has been found i.e. if data is not an empty string
         echo json_encode($users);
     }
 } finally {
