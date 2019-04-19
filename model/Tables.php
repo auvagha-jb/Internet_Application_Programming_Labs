@@ -1,14 +1,14 @@
 <?php
-include_once('../User.php');
-include_once('../DBConnector.php');
+include_once '../User.php';
+include_once '../helpers/DBConnector.php';
 $db = new DBConnector;
 
 try {
     /**
      * To retrieve users table
      */
-    if(isset($_POST['get_users'])) {
-        $user = new User;
+    if (isset($_POST['get_users'])) {
+        $user = User::create();
         $result = $user->readAll("user");
         $users = array();
 
@@ -22,6 +22,5 @@ try {
         echo json_encode($users);
     }
 } finally {
-    $db->closeDatabase();   
+    $db->closeDatabase();
 }
-

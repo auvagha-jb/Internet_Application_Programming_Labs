@@ -6,19 +6,40 @@ $(function () {
         let form = $(this),
             form_id = form.attr('id'),
             url = form.attr('action'),
-            data = get_form_data(form);
+            form_data = get_form_data(form);
 
-        //Form validation
-        if (validateForm()) {
-            ajax_form_submit(url,data).then(data => {
-                document.getElementById(form_id).reset();
-                displayAlert(data.msg,"success");
-                add_user_table.ajax.reload();
-            });
-        } else {
-            displayAlert("Some fields are empty","danger");
-        }
+        /* Form validation */
+
+        user_exists().then(data => {
+            let input = $('#username');
+            (!data.status && input.val() !== "") ? input.addClass('invalid') : input.removeClass('invalid');
+            validate_obj.username = data.status;
+            console.log(form_data);
+
+            if (!validateForm()) {
+                displayAlert("Some fields are empty","danger");
+            } else if (!validate_obj.username) {
+
+            }
+            else {
+                ajax_form_submit(url,form_data).then(data => {
+                    document.getElementById(form_id).reset();
+                    displayAlert(data.msg,"success");
+                    add_user_table.ajax.reload();
+                });
+
+            }
+        });
     });
+
+    /**
+     * @var {object} validate_obj
+     * Stores the state of the form 
+     */
+    let validate_obj = {
+        username: false
+    }
+
 
     /**
      * Ensures the form inputs are not null
@@ -28,6 +49,8 @@ $(function () {
             fname: document.forms["user_details"]["first_name"].value,
             lname: document.forms["user_details"]["last_name"].value,
             city: document.forms["user_details"]["city_name"].value,
+            username: document.forms["user_details"]["username"].value,
+            password: document.forms["user_details"]["password"].value,
         }
 
         for (let key in input) {
@@ -39,11 +62,19 @@ $(function () {
     }
 
     /**
+     * Ensures there are no duplicate usernames
+     */
+    function user_exists() {
+        let username = document.getElementById('username').value;
+        return ajax_form_submit("model/forms.php",{ user_exists: true,username: username });
+    }
+
+    /**
      * The users table
      */
     var add_user_table = data_table(
         "#users-table",
-        "tables/Tables.php",
+        "model/tables.php",
         { get_users: true },
         [
             {
@@ -104,14 +135,14 @@ $(function () {
 
     /**
     * To send asynchronous HTTP requests
-    * @param {string} url
-    * @param {string} data
+    * @param {string} url Url to which the request is sent
+    * @param {object} data The POST data which will be sent along with the requust
     * @returns {jqXHR}
     */
     function ajax_form_submit(url,data = null) {
         let btn = $('.submit-btn');
         let promise = $.ajax({
-            url: url, // Url to which the request is send
+            url: url,
             method: 'POST',
             dataType: "JSON", //The format in which we expect the response 
             beforeSend: function () {
@@ -121,6 +152,7 @@ $(function () {
             data: data,
             error: function (xhr,textStatus,errorThrown) {
                 console.error(xhr.responseText);
+                displayAlert("An error occured. Please try again later","danger");
             },
             success: function () {
                 btn.attr('disabled',false);
@@ -145,7 +177,7 @@ $(function () {
         target.addClass('alert-' + type);
 
         target.html(msg);
-        target.slideDown().delay(5000).slideUp();
+        target.slideDown().delay(6000).slideUp();
     }
 
 

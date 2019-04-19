@@ -1,11 +1,41 @@
-.hide {
-    display: none;
-}
-
 .users-page #page-feedback {
     margin-top: 50px;
 }
 
+/* Form errors */
 .form-errors {
-    color: red;
+    color: #e51c23;
+}
+
+/* Login form */
+form.sign-in{
+    position: absolute;
+    margin: auto;
+    margin-top: 2%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: solid #000;
+    border-radius: 5px;
+    border-width: thin;
+    border-color: darkgrey;
+    padding: 4%;
+    padding-bottom: 6%;
+    background: #000;
+    opacity: 0.9;    
+}
+
+/*Label focus color*/
+.sign-in .input-field input:focus + label {
+    color: darkgray !important;
+}
+
+/* Label underline focus color */
+.sign-in .input-field input:focus {
+    border-bottom: 1px solid darkgray !important;
+    box-shadow: 0 1px 0 darkgray !important;
+}
+
+.btn.login-btn {
+    border: 1px solid #fff !important;
 }
