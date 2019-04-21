@@ -12,18 +12,15 @@ $(function () {
 
         user_exists().then(data => {
             let input = $('#username');
-            let uname_error = "Username already exists";
+            let username_error = "Username already exists";
 
-
-            //If all fields are filled and username is unique -->Submit form data
+            //Ensure all fields are filled
             if (!validateForm()) {
                 displayAlert('Please fill all the fields','danger');
             }
 
-            //Add feedback classes
-            validate_obj.username = ajax_form_feedback(data,input,uname_error);
-
-            if (validate_obj.username) {
+            //Check that the username is unique
+            else if (ajax_form_feedback(data,input,username_error)) {
                 ajax_form_submit(url,form_data).then(data => {
                     document.getElementById(form_id).reset();
                     displayAlert(data.msg,"success");
@@ -34,7 +31,7 @@ $(function () {
     });
 
     /**
-     * Adds or removes invalid classes from form elements
+     * Adds or removes invalid class from form elements
      * @param {Object} data 
      * @param {Object} input 
      * @param {string} error_text 
@@ -72,12 +69,15 @@ $(function () {
         }
 
         let isValid = true;
+
+        console.log(input.password == "");
+
         for (let key in input) {
 
             let val = input[key];
             let field = $("#" + key);
 
-            if (val == "" || val == null) {
+            if (val == "") {
                 field.addClass('invalid');
                 field.siblings('.helper-text').attr('data-error','');
                 isValid = false;
