@@ -12,28 +12,46 @@ $(function () {
 
         user_exists().then(data => {
             let input = $('#username');
-            (!data.status && input.val() !== "") ? input.addClass('invalid') : input.removeClass('invalid');
-            validate_obj.username = data.status;
+            let uname_error = "Username already exists";
 
-            //Ensure all fields are filled
+
+            //If all fields are filled and username is unique -->Submit form data
             if (!validateForm()) {
-                displayAlert("Some fields are empty","danger");
+                displayAlert('Please fill all the fields','danger');
+            }
 
-                //Ensure the username is unique
-            } else if (validate_obj.username) {
+            //Add feedback classes
+            validate_obj.username = ajax_form_feedback(data,input,uname_error);
 
+            if (validate_obj.username) {
                 ajax_form_submit(url,form_data).then(data => {
                     document.getElementById(form_id).reset();
                     displayAlert(data.msg,"success");
                     add_user_table.ajax.reload();
                 });
-
             }
         });
     });
 
     /**
-     * @var {object} validate_obj
+     * Adds or removes invalid classes from form elements
+     * @param {Object} data 
+     * @param {Object} input 
+     * @param {string} error_text 
+     * @returns boolean
+     */
+    function ajax_form_feedback(data,input,error_text) {
+        if (!data.status && input.val() !== "") {
+            input.siblings('.helper-text').attr('data-error',error_text);
+            input.addClass('invalid');
+        } else if (data.status) {
+            input.removeClass('invalid');
+        }
+        return data.status;
+    }
+
+    /**
+     * @var {Object} validate_obj
      * Stores the state of the form 
      */
     let validate_obj = {
@@ -45,20 +63,29 @@ $(function () {
      * Ensures the form inputs are not null
      */
     function validateForm() {
-        var input = {
-            fname: document.forms["user_details"]["first_name"].value,
-            lname: document.forms["user_details"]["last_name"].value,
-            city: document.forms["user_details"]["city_name"].value,
+        let input = {
+            first_name: document.forms["user_details"]["first_name"].value,
+            last_name: document.forms["user_details"]["last_name"].value,
+            city_name: document.forms["user_details"]["city_name"].value,
             username: document.forms["user_details"]["username"].value,
             password: document.forms["user_details"]["password"].value,
         }
 
+        let isValid = true;
         for (let key in input) {
-            if (input[key] == "") {
-                return false;
+
+            let val = input[key];
+            let field = $("#" + key);
+
+            if (val == "" || val == null) {
+                field.addClass('invalid');
+                field.siblings('.helper-text').attr('data-error','');
+                isValid = false;
+            } else {
+                field.removeClass('invalid');
             }
         }
-        return true;
+        return isValid;
     }
 
     /**
@@ -94,9 +121,9 @@ $(function () {
      * Initialize datatables plugin
      * @param {string} selector 
      * @param {string} url 
-     * @param {object} data data to be sent to server
+     * @param {Object} data data to be sent to server
      * @param {array} columns array with column objects
-     * @returns {datatables object}  
+     * @returns {Object} datatables object  
      */
     function data_table(selector,url,data,columns) {
         console.log(selector,url,data)
@@ -116,7 +143,7 @@ $(function () {
 
     /**
      * Gets the data for each from element with attribute 'name'
-     * @param {object} form 
+     * @param {Object} form 
      */
     function get_form_data(form) {
         let data = {};
@@ -135,8 +162,8 @@ $(function () {
     /**
     * To send asynchronous HTTP requests
     * @param {string} url Url to which the request is sent
-    * @param {object} data The POST data which will be sent along with the requust
-    * @returns {jqXHR}
+    * @param {Object} data The POST data which will be sent along with the request
+    * @returns jqXHR
     */
     function ajax_form_submit(url,data = null) {
         let btn = $('.submit-btn');

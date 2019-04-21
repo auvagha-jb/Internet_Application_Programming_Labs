@@ -50,9 +50,9 @@ try {
      */
     elseif (isset($_POST['user_exists'])) {
         $available = $user->usernameAvailable();
-
         $data = array();
         $data['status'] = true;
+
         if (!$available) {
             $data['status'] = false;
             $data['msg'] = "Username already exists. Pick a different one.";
