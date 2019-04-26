@@ -12,7 +12,7 @@ $user = User::create();
 
 // $status = $uploader->uploadFile();
 // $msg = $uploader->getMsg();
-// $data = array('status' => $status, 'target' => 'file', 'msg' => $msg, 'size' => $uploader->getFileSize(), 'type' => $uploader->getFileType());
+// $data = array('path' => $uploader->getPath(), 'status' => $status, 'target' => 'file', 'msg' => $msg, 'size' => $uploader->getFileSize(), 'type' => $uploader->getFileType());
 // echo json_encode($data);
 
 /**
@@ -52,7 +52,7 @@ if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
         //Insert --> Adds new user
         $user->save();
         //Update --> Adds the path to the uploaded file
-        $uploader->updatePath($uploader->getPath());
+        $uploader->updatePath($username);
 
         $saved = $conn->commit();
 
@@ -64,10 +64,12 @@ if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
             'msg' => $msg,
             'target' => $target,
             'status' => $saved,
+            'path' => $uploader->getPath(),
         );
+
         echo json_encode($response);
 
     }
 } else {
-    echo json_encode("Nada");
+    echo json_encode("File data not received");
 }

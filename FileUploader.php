@@ -108,14 +108,14 @@ class FileUploader
                 if ($is_valid == true) {
                     $status = move_uploaded_file($file_tmp, $folder . $file_name);
                     $msg = $status ? "Profile picture uploaded" : "Error uploading file";
-                    $this->setOriginalName($file_name);
-                    $this->setPath($path);
                 }
 
             } else {
                 $status = true;
                 $msg = "File already exists";
             }
+            $this->setOriginalName($file_name);
+            $this->setPath($path);
         }
 
         $this->setMsg($msg);
