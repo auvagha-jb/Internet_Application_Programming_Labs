@@ -25,7 +25,8 @@ session_start();
                 <div class="form-errors">
                     <?php User::show_form_error();?>
                 </div>
-                <form method="post" action="model/forms.php" id="add-user" name="user_details" class="white">
+                <form method="post" enctype="multipart/form-data" action="model/file_upload.php" id="add-user"
+                    name="user_details" class="white">
                     <p class="lead">Add user</p>
                     <div class="input-field">
                         <input id="first_name" name="first_name" type="text" class="validate">
@@ -51,6 +52,16 @@ session_start();
                         <input id="password" name="password" type="password">
                         <label for="password">Password</label>
                         <span class="helper-text" data-error=""></span>
+                    </div>
+                    <div class="file-field input-field">
+                        <div class="btn-small white">
+                            <span style="color: #9e9e9e;">Profile Image</span>
+                            <input type="file" name="image" id="image">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text">
+                            <span class="helper-text" data-error=""></span>
+                        </div>
                     </div>
                     <button type="submit" name="btn-save"
                         class="btn blue waves-effect waves-light submit-btn">Save</button>

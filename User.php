@@ -27,8 +27,10 @@ class User implements Crud, Authenticator
 
     /**
      * A pseudo constructor
-     * We need this because in some cases, we don't have all the
+     * We need this because in cases where we don't have all the
      * parameters that the constructor takes
+     * However there are defaulyt values set in the actual constructor to prevent an error from
+     * being thrown
      * It is static therefore can be accessed without creating a method
      */
     public static function create()

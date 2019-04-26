@@ -1,0 +1,11 @@
+Ajax file upload
+Add image to the list ...
+
+Test functions in object oriented environment
+
+
+
+
+
+
+do client-side file validations

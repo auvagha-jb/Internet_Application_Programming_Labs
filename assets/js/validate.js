@@ -6,28 +6,47 @@ $(function () {
         let form = $(this),
             form_id = form.attr('id'),
             url = form.attr('action'),
-            form_data = get_form_data(form);
+            context = this;
 
         /* Form validation */
 
-        user_exists().then(data => {
-            let input = $('#username');
-            let username_error = "Username already exists";
+        //Ensure all fields are filled
+        if (!validateForm()) {
+            displayAlert('Please fill all the fields','danger');
+        } else {
+            //Check that the username is unique/
+            user_exists().then(data => {
+                data = JSON.parse(data);
+                let input = $('#username');
+                let username_error = "Username already exists";
+                //If the feedback is positive i.e. status == true -->Submit the form
+                if (ajax_form_feedback(data,input,username_error)) {
+                    ajax_submit_form_with_image(url,context).then(data => {
+                        data = JSON.parse(data);
+                        console.log(data);
+                        let alert_type = (data.status) ? "success" : "danger";
+                        let input = $('.file-path-wrapper').children('.file-path');
+                        let text = $('.file-path-wrapper').children('.helper-text');
 
-            //Ensure all fields are filled
-            if (!validateForm()) {
-                displayAlert('Please fill all the fields','danger');
-            }
+                        if (!data.status) {
+                            if (data.target == "file") {
+                                input.addClass('invalid');
+                                text.attr('data-error',data.msg);
 
-            //Check that the username is unique
-            else if (ajax_form_feedback(data,input,username_error)) {
-                ajax_form_submit(url,form_data).then(data => {
-                    document.getElementById(form_id).reset();
-                    displayAlert(data.msg,"success");
-                    add_user_table.ajax.reload();
-                });
-            }
-        });
+                            } else {
+                                input.removeClass('invalid');
+                                displayAlert(data.msg,alert_type);
+                            }
+
+                        } else {
+                            displayAlert(data.msg,alert_type);
+                            document.getElementById(form_id).reset();
+                            add_user_table.ajax.reload();
+                        }
+                    });
+                }
+            });
+        }
     });
 
     /**
@@ -47,14 +66,6 @@ $(function () {
         return data.status;
     }
 
-    /**
-     * @var {Object} validate_obj
-     * Stores the state of the form 
-     */
-    let validate_obj = {
-        username: false
-    }
-
 
     /**
      * Ensures the form inputs are not null
@@ -66,26 +77,45 @@ $(function () {
             city_name: document.forms["user_details"]["city_name"].value,
             username: document.forms["user_details"]["username"].value,
             password: document.forms["user_details"]["password"].value,
+            image: document.forms["user_details"]["image"].value,
         }
 
-        let isValid = true;
-
-        console.log(input.password == "");
+        let valid = true;
 
         for (let key in input) {
-
             let val = input[key];
-            let field = $("#" + key);
+            let field = (key == "image") ? $("#" + key).parents('.file-field')
+                .children('.file-path-wrapper').children('.validate')
+                : $("#" + key);
 
             if (val == "") {
                 field.addClass('invalid');
                 field.siblings('.helper-text').attr('data-error','');
-                isValid = false;
-            } else {
+                valid = false;
+
+            }
+
+            // else if (key != "password" && contains_specialchar(val)) {
+            //     field.addClass('invalid');
+            //     field.siblings('.helper-text').attr('data-error','Only alphanumeric characters are allowed on this field');
+            //     valid = false;
+
+            // } 
+            else {
                 field.removeClass('invalid');
             }
         }
-        return isValid;
+        return valid;
+    }
+
+    /**
+     * Evaluates whether the input contains special characters
+     * A defense against server side scripting
+     * @param {string} value 
+     */
+    function contains_specialchar(value) {
+        let regex = new RegExp(/[!@$%\^&()_+\-=\[\]{};':"\|,\.<>\/?]/,"i");
+        return !regex.test(value);
     }
 
     /**
@@ -126,7 +156,7 @@ $(function () {
      * @returns {Object} datatables object  
      */
     function data_table(selector,url,data,columns) {
-        console.log(selector,url,data)
+        //console.log(selector,url,data)
         return $(selector).DataTable({
             "ajax": {
                 "url": url,
@@ -155,9 +185,10 @@ $(function () {
             //Insert the form data into the object
             data[name] = value;
         });
-
         return data;
     }
+
+
 
     /**
     * To send asynchronous HTTP requests
@@ -165,33 +196,86 @@ $(function () {
     * @param {Object} data The POST data which will be sent along with the request
     * @returns jqXHR
     */
-    function ajax_form_submit(url,data = null) {
+    function ajax_form_submit(url,form_data = null) {
         let btn = $('.submit-btn');
         let promise = $.ajax({
             url: url,
             method: 'POST',
-            dataType: "JSON", //The format in which we expect the response 
+            data: form_data,
             beforeSend: function () {
-                btn.attr('disabled',true);
-                btn.html('Please wait...');
-            },
-            data: data,
-            error: function (xhr,textStatus,errorThrown) {
-                console.error(xhr.responseText);
-                displayAlert("An error occured. Please try again later","danger");
+                disable_btn(btn);
             },
             success: function () {
-                btn.attr('disabled',false);
-                btn.html('Save');
+                enable_btn(btn);
+            },
+            error: function (xhr,textStatus,errorThrown) {
+                console.error(xhr.responseText);
+                console.error(textStatus);
+                console.error(errorThrown);
+                displayAlert("An error occured. Please try again later","danger");
             }
         });
 
         return promise;
     }
 
+
+    /**
+     * Submits forms of enctype = "multipart/form-data" 
+     * @param {string} url 
+     * @param {context} context lexical this 
+     */
+    function ajax_submit_form_with_image(url,context) {
+        let btn = $('.submit-btn');
+        let promise = $.ajax({
+            url: url, // Url to which the request is send
+            type: "POST",             // Type of request to be send, called as method
+            data: new FormData(context), // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+            contentType: false,       // The content type used when sending data to the server.
+            cache: false,             // To unable request pages to be cached
+            processData: false,
+            beforeSend: function () {
+                disable_btn(btn);
+            },
+            success: function (data) {
+                enable_btn(btn);
+            },
+            error: function (xhr,textStatus,errorThrown) {
+                console.error(xhr.responseText);
+                console.error(textStatus);
+                console.error(errorThrown);
+            }
+        });
+        return promise;
+    }
+
+    /**
+     * Test upload
+     */
+    $("#test-form").submit(function (e) {
+        e.preventDefault();
+        let url = $(this).attr('action'),context = this;
+
+        ajax_submit_form_with_image(url,context).then(data => {
+            console.log(JSON.parse(data));
+        });
+
+        return false;
+    })
+
+    function disable_btn(btn) {
+        btn.attr('disabled',true);
+        btn.html('Please wait...');
+    }
+
+    function enable_btn(btn) {
+        btn.attr('disabled',false);
+        btn.html('Save');
+    }
     /**
      * Displays notification that slides down from the top of the page
      * @param {string} msg
+     * @param {string} type
      * @returns {undefined}
      */
     function displayAlert(msg,type) {
@@ -205,7 +289,6 @@ $(function () {
         target.html(msg);
         target.slideDown().delay(6000).slideUp();
     }
-
 
 
     /**
