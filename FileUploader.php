@@ -55,17 +55,6 @@ class FileUploader
     }
 
     //File path
-    public function setPath($path)
-    {
-        $this->final_file_path = $path;
-    }
-
-    public function getPath()
-    {
-        return $this->final_file_path;
-    }
-
-    //File path
     public function setMsg($msg)
     {
         $this->msg = $msg;
@@ -115,7 +104,6 @@ class FileUploader
                 $msg = "File already exists";
             }
             $this->setOriginalName($file_name);
-            $this->setPath($path);
         }
 
         $this->setMsg($msg);
@@ -147,14 +135,19 @@ class FileUploader
         return false;
     }
 
-    public function updatePath($username)
+    public function updateImage($username)
     {
-        $path = $this->getPath();
+        $name = $this->getOriginalName();
         $conn = $this->db->conn;
 
-        $stmt = $conn->prepare("UPDATE user SET file_path = ? WHERE username = ?");
-        $stmt->bind_param("ss", $path, $username);
+        $stmt = $conn->prepare("UPDATE user SET image = ? WHERE username = ?");
+        $stmt->bind_param("ss", $name, $username);
         $stmt->execute();
+    }
+
+    public function upload_url($image_name)
+    {
+        return "uploads/" . $image_name;
     }
 
     public function fileWasSelected()

@@ -15,7 +15,8 @@ $user = User::create();
 // $data = array('path' => $uploader->getPath(), 'status' => $status, 'target' => 'file', 'msg' => $msg, 'size' => $uploader->getFileSize(), 'type' => $uploader->getFileType());
 // echo json_encode($data);
 
-/**
+try {
+    /**
  * Add user
  */
 if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
@@ -52,7 +53,7 @@ if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
         //Insert --> Adds new user
         $user->save();
         //Update --> Adds the path to the uploaded file
-        $uploader->updatePath($username);
+        $uploader->updateImage($username);
 
         $saved = $conn->commit();
 
@@ -64,7 +65,7 @@ if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
             'msg' => $msg,
             'target' => $target,
             'status' => $saved,
-            'path' => $uploader->getPath(),
+            'name' => $uploader->getOriginalName(),
         );
 
         echo json_encode($response);
@@ -72,4 +73,11 @@ if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
     }
 } else {
     echo json_encode("File data not received");
+}
+
+} catch(Exception $e) {
+    echo json_encode(['status'=>false, 'msg'=>$e->getMessage]);
+
+} finally {
+    $db->closeDatabase();
 }
