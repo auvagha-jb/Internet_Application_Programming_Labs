@@ -63,6 +63,8 @@ session_start();
                             <span class="helper-text" data-error=""></span>
                         </div>
                     </div>
+                    <input type="hidden" name="timestamp" id="timestamp">
+                    <input type="hidden" name="offset" id="offset">
                     <button type="submit" name="btn-save"
                         class="btn blue waves-effect waves-light submit-btn">Save</button>
                 </form>
@@ -74,6 +76,7 @@ session_start();
                     <thead class="black text-white">
                         <tr>
                             <td>Name</td>
+                            <td>Username</td>
                             <td>City</td>
                         </tr>
                     </thead>

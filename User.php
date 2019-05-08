@@ -10,18 +10,22 @@ class User implements Crud, Authenticator
     private $first_name;
     private $last_name;
     private $city_name;
+    private $utc_timestamp;
+    private $time_zone_offset;
 
     private $username;
     private $password;
     private $db;
 
-    public function __construct($first_name = "", $last_name = "", $city_name = "", $username = "", $password = "")
-    {
+    public function __construct($first_name = "", $last_name = "", $city_name = "",
+        $username = "", $password = "", $timestamp = "", $offset = "") {
         $this->first_name = $first_name;
         $this->last_name = $last_name;
         $this->city_name = $city_name;
         $this->username = $username;
         $this->password = $password;
+        $this->timestamp = $timestamp;
+        $this->offset = $offset;
         $this->db = new DBConnector;
     }
 
@@ -74,6 +78,26 @@ class User implements Crud, Authenticator
         return $this->password;
     }
 
+    public function setTimestamp($utc_timestamp)
+    {
+        $this->utc_timestamp = $utc_timestamp;
+    }
+
+    public function getTimestamp()
+    {
+        return $this->utc_timestamp;
+    }
+
+    public function setOffset($time_zone_offset)
+    {
+        $this->time_zone_offset = $time_zone_offset;
+    }
+
+    public function getOffset()
+    {
+        return $this->time_zone_offset;
+    }
+
     /* Implemented methods */
     /**
      * Adds new user
@@ -88,11 +112,14 @@ class User implements Crud, Authenticator
         $username = $this->username;
         $this->hashPassword();
         $password = $this->password;
+        $timestamp = $this->timestamp;
+        $offset = $this->offset;
 
-        $query = "INSERT INTO user (`first_name`, `last_name`, `user_city`, `username`, `password`)
-                    VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO `user`(`first_name`, `last_name`, `user_city`, `username`,
+                `password`, `utc_time_stamp`, `utc_offset`)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sssss", $fname, $lname, $city, $username, $password);
+        $stmt->bind_param("sssssss", $fname, $lname, $city, $username, $password, $timestamp, $offset);
         return $stmt->execute();
     }
 

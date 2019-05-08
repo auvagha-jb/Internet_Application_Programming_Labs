@@ -46,6 +46,9 @@ try {
         echo json_encode("Action not found");
     }
 
+} catch (Exception $e) {
+    echo json_encode(['status' => false, 'msg' => $e->getMessage]);
+
 } finally {
     $db->closeDatabase();
 }

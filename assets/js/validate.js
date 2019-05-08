@@ -141,7 +141,8 @@ $(function () {
                     return name;
                 }
             },
-            { "data": "user_city" },
+            { "data": "username" },
+            { "data": "user_city" }
         ]);
 
 
