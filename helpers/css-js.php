@@ -1,12 +1,13 @@
 <!--CSS Stylesheets-->
 <link rel="stylesheet" href="assets/materialize/materialize.css">
-<!-- <link rel="stylesheet" href="assets/materialize/materialize-icons.css"> -->
 <link rel="stylesheet" href="assets/bootstrap/bootstrap.css">
 <link rel="stylesheet" href="assets/datatables/css/dataTables.bootstrap4.css">
+<!-- <link rel="stylesheet" href="assets/css/font-awesome.css"> -->
+<link rel="stylesheet" href="assets/css/material-icons.css">
 <link rel="stylesheet" href="assets/css/styles.css">
 <!--== JS Scripts ==-->
 <!-- Plugins -->
-<script src="assets/jquery/jquery.min.js"></script>
+<script src="assets/jquery/jquery.js"></script>
 <script src="assets/materialize/materialize.js"></script>
 <!-- DataTables -->
 <script src="assets/datatables/js/jquery.dataTables.min.js"></script>

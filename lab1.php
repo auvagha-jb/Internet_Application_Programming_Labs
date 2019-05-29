@@ -25,7 +25,7 @@ session_start();
                 <div class="form-errors">
                     <?php User::show_form_error();?>
                 </div>
-                <form method="post" enctype="multipart/form-data" action="model/file_upload.php" id="add-user"
+                <form method="post" enctype="multipart/form-data" action="model/add_user.php" id="add-user"
                     name="user_details" class="white">
                     <p class="lead">Add user</p>
                     <div class="input-field">

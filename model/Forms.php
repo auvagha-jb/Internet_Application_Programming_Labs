@@ -1,14 +1,18 @@
 <?php
+if(session_status() == PHP_SESSION_NONE) session_start();
+
 include_once '../helpers/DBconnector.php';
 include_once '../User.php';
 include '../FileUploader.php';
+include '../ApiGenerator.php';
 
 $db = new DBConnector;
 $uploader = new FileUploader;
+$api = new ApiGenerator();
 $conn = $db->conn;
 
 // Create an instance of User class without params --> See method create()
-$user = User::create();
+$user = new User();
 
 try {
     /**
@@ -38,11 +42,41 @@ try {
 
         if ($user->isPasswordCorrect()) {
             $user->login();
+            $row = $user->getUserData($username);
+            $user->setUserId($row['user_id']);
             $user->createUserSession();
         } else {
             header("location: ../login.php");
         }
-    } else {
+    
+    /**
+     * Generate API Key
+     */
+    }elseif(isset($_POST['generate_api_key'])){
+        if($_SERVER["REQUEST_METHOD"] !== "POST"){
+            header("HTTP/1/0 403 Forbidden");
+        } else { 
+            $api->setApiKey($api->generateApiKey(64));
+            //header("Content-type: application/json");
+            echo $api->generateResponse();
+        }
+
+    /**
+     * Check whether user has API key 
+     */
+    } elseif(isset($_POST['has_api_key'])){
+
+        $api_data = $api->fetchUserApiKey($_SESSION['user_id']);
+        echo json_encode($api_data);
+    
+    /**
+     * createOrder
+     */
+    }elseif(isset($_POST['create_order'])){
+
+
+    }
+    else {
         echo json_encode("Action not found");
     }
 

@@ -16,13 +16,11 @@ $(function () {
         } else {
             //Check that the username is unique/
             user_exists().then(data => {
-                data = JSON.parse(data);
                 let input = $('#username');
                 let username_error = "Username already exists";
                 //If the feedback is positive i.e. status == true -->Submit the form
                 if (ajax_form_feedback(data,input,username_error)) {
                     ajax_submit_form_with_image(url,context).then(data => {
-                        data = JSON.parse(data);
                         console.log(data);
                         let alert_type = (data.status) ? "success" : "danger";
                         let input = $('.file-path-wrapper').children('.file-path');
@@ -48,6 +46,70 @@ $(function () {
             });
         }
     });
+
+    /**onCLick: Generate API key*/
+    $("#api-key-btn").click(function () {
+        //Check whether the user has an API key
+        getApiKey().then(api_key => {
+            //If the user has no API key
+            console.log(api_key)
+            if (api_key.num_rows == 0) {
+                //Generate a new API key
+                generateApi($(this)).then(function (data) {
+                    console.log(data)
+                        //Check whether the key was generated successfully
+                        (data.status) ?
+                        //Display the api key in the textarea
+                        $('#api_key').html(data.msg) :
+                        //Alert the user that they already have an APi 
+                        displayAlert(data.msg,"danger");
+                })
+
+                //If user has API key, notify them and disable the button to prevent more requests
+            } else {
+                $("#api_exists").removeClass("hide")
+                $(this).attr('disabled','true')
+                displayAlert("You already have an API key","warning")
+            }
+        })
+    })
+
+    /**onSubmit: Place order */
+    $("#order_form").submit(function (e) {
+        e.preventDefault();
+        let form = $(this),url = form.attr('action'),form_data = get_form_data(form)
+
+        ajax_form_submit(url,form_data).then(function (data) {
+            console.log(data)
+        })
+    })
+
+
+    function generateApi(btn) {
+        let promise = $.ajax({
+            url: "model/Forms.php",
+            method: 'POST',
+            dataType: "JSON",
+            data: { generate_api_key: true },
+            beforeSend: function () {
+                btn.html("Generating...")
+            },
+            success: function () {
+                btn.html("Generated")
+            },
+            error: function (xhr,textStatus,errorThrown) {
+                console.error(xhr.responseText);
+                console.error(textStatus);
+                console.error(errorThrown);
+                displayAlert("An error occured. Please try again later","danger");
+            }
+        });
+        return promise;
+    }
+
+    function getApiKey() {
+        return ajax_form_submit("model/Forms.php",{ has_api_key: true })
+    }
 
     /**
      * Adds or removes invalid class from form elements
@@ -194,7 +256,7 @@ $(function () {
     /**
     * To send asynchronous HTTP requests
     * @param {string} url Url to which the request is sent
-    * @param {Object} data The POST data which will be sent along with the request
+    * @param {Object} form_data The POST data which will be sent along with the request
     * @returns jqXHR
     */
     function ajax_form_submit(url,form_data = null) {
@@ -202,6 +264,7 @@ $(function () {
         let promise = $.ajax({
             url: url,
             method: 'POST',
+            //dataType: "JSON",
             data: form_data,
             beforeSend: function () {
                 disable_btn(btn);
@@ -231,6 +294,7 @@ $(function () {
         let promise = $.ajax({
             url: url, // Url to which the request is send
             type: "POST",             // Type of request to be send, called as method
+            dataType: "JSON",
             data: new FormData(context), // Data sent to server, a set of key/value pairs (i.e. form fields and values)
             contentType: false,       // The content type used when sending data to the server.
             cache: false,             // To unable request pages to be cached
@@ -258,7 +322,7 @@ $(function () {
         let url = $(this).attr('action'),context = this;
 
         ajax_submit_form_with_image(url,context).then(data => {
-            console.log(JSON.parse(data));
+            console.log(data);
         });
 
         return false;

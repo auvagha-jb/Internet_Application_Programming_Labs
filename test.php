@@ -16,7 +16,7 @@ if (isset($_POST['test-rename'])) {
 
 <body>
     <!-- action="model/Forms.php" -->
-    <form method="POST" action="model/file_upload.php" enctype="multipart/form-data" id="test-form">
+    <form method="POST" action="model/add_user.php" enctype="multipart/form-data" id="test-form">
         <input type="file" name="image" id="image">
         <input type="text" name="meh" id="meh">
         <button type="submit" name="test-upload" class="submit-btn">Submit</button>

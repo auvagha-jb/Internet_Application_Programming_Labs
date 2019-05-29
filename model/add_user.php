@@ -51,13 +51,12 @@ try {
             echo json_encode($data);
 
         } else {
-
             $conn->autocommit(false);
             //Insert --> Adds new user
             $user->save();
             //Update --> Adds the path to the uploaded file
             $uploader->updateImage($username);
-
+            //Commit the changes to the database
             $saved = $conn->commit();
 
             //Set the data to be returned to client
@@ -72,14 +71,13 @@ try {
             );
 
             echo json_encode($response);
-
         }
     } else {
         echo json_encode("File data not received");
     }
 
 } catch (Exception $e) {
-    echo json_encode(['status' => false, 'msg' => $e->getMessage]);
+    die(json_encode(['status' => false, 'msg' => $e->getMessage()]));
 
 } finally {
     $db->closeDatabase();

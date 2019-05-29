@@ -190,7 +190,7 @@ class User implements Crud, Authenticator
         $conn = $this->db->conn;
         $found = false;
 
-        $stmt = $conn->prepare("SELECT * FROM user WHERE username = ?");
+        $stmt = $conn->prepare("SELECT `username`, `password` FROM user WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -225,6 +225,17 @@ class User implements Crud, Authenticator
             session_start();
         }
         $_SESSION['username'] = $this->getUsername();
+        $_SESSION['user_id'] = $this->getUserId();
+    }
+
+    public function getUserData($username)
+    {
+        $query = "SELECT user_id FROM user WHERE username = ?";
+        $stmt = $this->db->conn->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_array();
     }
 
     public function logout()
