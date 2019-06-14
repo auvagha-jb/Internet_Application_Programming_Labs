@@ -3,8 +3,8 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 
 include_once '../helpers/DBconnector.php';
 include_once '../User.php';
-include '../FileUploader.php';
-include '../ApiGenerator.php';
+include_once '../FileUploader.php';
+include_once '../ApiGenerator.php';
 
 $db = new DBConnector;
 $uploader = new FileUploader;
@@ -57,7 +57,7 @@ try {
             header("HTTP/1/0 403 Forbidden");
         } else { 
             $api->setApiKey($api->generateApiKey(64));
-            //header("Content-type: application/json");
+            header("Content-type: application/json");
             echo $api->generateResponse();
         }
 
@@ -68,13 +68,6 @@ try {
 
         $api_data = $api->fetchUserApiKey($_SESSION['user_id']);
         echo json_encode($api_data);
-    
-    /**
-     * createOrder
-     */
-    }elseif(isset($_POST['create_order'])){
-
-
     }
     else {
         echo json_encode("Action not found");

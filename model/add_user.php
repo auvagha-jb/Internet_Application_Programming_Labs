@@ -1,7 +1,7 @@
 <?php
 include_once '../helpers/DBconnector.php';
 include_once '../User.php';
-include '../FileUploader.php';
+include_once '../FileUploader.php';
 
 $db = new DBConnector;
 $uploader = new FileUploader;

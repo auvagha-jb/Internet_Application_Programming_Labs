@@ -127,18 +127,50 @@ class ApiHandler
         return $result->num_rows > 0;
     }
 
+    public function fetchUserApiKey($user_id)
+    {
+        $query = "SELECT api_key FROM api_keys WHERE user_id = ?";
+        $stmt = $this->db->conn->prepare($query);
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_array();
+
+        //Returns the api_key and num_rows
+        return $row['api_key'];
+    }
     public function checkContentType()
     {
-
+        return null;
     }
 
     public function createOrder($data)
     {
-        $query = "INSERT INTO `orders`(`order_name`, `units`, `unit_price`, `order_status`) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO `orders`(`user_id`, `order_name`, `units`, `unit_price`, `order_status`) 
+        VALUES (?, ?, ?, ?, ?)";
         // $this->db->conn->auto_commit(false);
         $stmt = $this->db->conn->prepare($query);
-        $stmt->bind_param("ssss", $data["order_name"], $data["units"], $data["unit_price"], $data["order_status"]);
+        $stmt->bind_param("sssss", $data['user_id'], $data["order_name"], $data["units"], $data["unit_price"], $data["order_status"]);
         return $stmt->execute();
+    }
+
+    public function fetchUserOrders($user_id)
+    {
+        $query = "SELECT * FROM `orders` WHERE `user_id` = ? ORDER BY order_id DESC";
+        $stmt = $this->db->conn->prepare($query);
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    public function fetchOrderStatus($order_id)
+    {
+        $query = "SELECT `order_status` FROM `orders` WHERE `order_id` = ?";
+        $stmt = $this->db->conn->prepare($query);
+        $stmt->bind_param("s", $order_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_array();
     }
 
     public function fetchAllOrders()

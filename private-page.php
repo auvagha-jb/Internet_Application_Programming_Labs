@@ -1,5 +1,5 @@
 <?php
-include './ApiGenerator.php';
+include_once './ApiGenerator.php';
 $api = new ApiGenerator();
 
 if (session_status() == PHP_SESSION_NONE) {

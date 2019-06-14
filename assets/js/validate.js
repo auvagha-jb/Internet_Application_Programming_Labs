@@ -1,5 +1,7 @@
 $(function () {
 
+    getUserOrders();
+
     $("form#add-user").submit(function (e) {
         e.preventDefault();
 
@@ -18,6 +20,8 @@ $(function () {
             user_exists().then(data => {
                 let input = $('#username');
                 let username_error = "Username already exists";
+                console.log(data)
+                data = JSON.parse(data)
                 //If the feedback is positive i.e. status == true -->Submit the form
                 if (ajax_form_feedback(data,input,username_error)) {
                     ajax_submit_form_with_image(url,context).then(data => {
@@ -53,16 +57,20 @@ $(function () {
         getApiKey().then(api_key => {
             //If the user has no API key
             console.log(api_key)
+            api_key = JSON.parse(api_key)
             if (api_key.num_rows == 0) {
                 //Generate a new API key
                 generateApi($(this)).then(function (data) {
                     console.log(data)
-                        //Check whether the key was generated successfully
-                        (data.status) ?
+                    //Check whether the key was generated successfully
+                    if (data.status) {
                         //Display the api key in the textarea
-                        $('#api_key').html(data.msg) :
+                        $('#api_key').html(data.msg)
+                    }
+                    else {
                         //Alert the user that they already have an APi 
                         displayAlert(data.msg,"danger");
+                    }
                 })
 
                 //If user has API key, notify them and disable the button to prevent more requests
@@ -78,12 +86,64 @@ $(function () {
     $("#order_form").submit(function (e) {
         e.preventDefault();
         let form = $(this),url = form.attr('action'),form_data = get_form_data(form)
+        let btn = $('.submit-btn')
+        getApiKey().then(api_data => {
+            //If the user has no API key
+            console.log(api_data)
+            api_data = JSON.parse(api_data)
+            let api_key = api_data.api_key;
 
-        ajax_form_submit(url,form_data).then(function (data) {
-            console.log(data)
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: form_data,
+                headers: { "Authorization": api_key },
+                beforeSend: function () {
+                    disable_btn(btn);
+                },
+                success: function (data) {
+                    enable_btn(btn);
+                    console.log(data)
+                    data = JSON.parse(data)
+                    let alert_type = data.status ? "success" : "danger"
+                    //User feedback
+                    displayAlert(data.message,alert_type)
+                    //refill the select 
+                    getUserOrders();
+                },
+                error: function (xhr,textStatus,errorThrown) {
+                    console.error(xhr.responseText);
+                    console.error(textStatus);
+                    console.error(errorThrown);
+                    displayAlert("An error occured. Please try again later","danger");
+                }
+            });
+        })
+
+    })
+
+    $("#order_status_form").submit(function (e) {
+        e.preventDefault();
+
+        let form = $(this),url = form.attr('action')
+        let order_id = $("#orders").val()
+        ajax_form_submit(url,{ order_id,get_order_status: true }).then(data => {
+            data = JSON.parse(data)
+            $("#order_status_check").text("Order " + data.order_id + " status: " + data.order_status);
         })
     })
 
+    /** Populates the user orders select  */
+    function getUserOrders() {
+        let user_id = $("#user_id").text();
+        ajax_form_submit("model/Orders.php",{ "user_id": user_id,"get_orders": true }).then(orders => {
+            console.log(orders);
+            orders = JSON.parse(orders);
+            let alt_message = '<option value="">No orders have been made</option>';
+            let orders_list = orders.num_rows > 0 ? orders.orders_list : alt_message
+            $("#orders").html(orders_list)
+        });
+    }
 
     function generateApi(btn) {
         let promise = $.ajax({
@@ -197,6 +257,7 @@ $(function () {
         { get_users: true },
         [
             {
+                //Join the first name and last name columns 
                 "data": "first_name",
                 "render": function (data,type,row) {
                     var name = row['first_name'] + " " + row['last_name'];
@@ -244,10 +305,11 @@ $(function () {
         //Get elements with a _name_ attribute
         form.find('[name]').each(function () {
             let input = $(this),name = input.attr('name'),value = input.val();
-
             //Insert the form data into the object
             data[name] = value;
         });
+        data["button_text"] = form.children('.submit-btn').text();
+
         return data;
     }
 
@@ -260,11 +322,11 @@ $(function () {
     * @returns jqXHR
     */
     function ajax_form_submit(url,form_data = null) {
-        let btn = $('.submit-btn');
+        let btn = $('.submit-btn')
+        btn.attr('text',form_data.button_text)
         let promise = $.ajax({
             url: url,
             method: 'POST',
-            //dataType: "JSON",
             data: form_data,
             beforeSend: function () {
                 disable_btn(btn);
@@ -330,12 +392,13 @@ $(function () {
 
     function disable_btn(btn) {
         btn.attr('disabled',true);
-        btn.html('Please wait...');
+        // btn.html('Please wait...');
     }
 
     function enable_btn(btn) {
+        let text = btn.attr('text')
         btn.attr('disabled',false);
-        btn.html('Save');
+        //btn.html(text);
     }
     /**
      * Displays notification that slides down from the top of the page
