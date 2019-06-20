@@ -9,23 +9,32 @@
 </head>
 
 <body>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <td>Car ID</td>
-                <td>Make</td>
-                <td>Model</td>
-            </tr>
-        </thead>
-        <tbody>
+    @include('helpers.navbar')
 
-            @foreach ($cars as $car)
-            <tr>{{$car->id}}</tr>
-            <tr>{{$car->make}}</tr>
-            <tr>{{$car->model}}</tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="row pt-3">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>Car ID</td>
+                        <td>Make</td>
+                        <td>Model</td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach ($cars as $car)
+                    <tr>
+                        <td>{{$car->id}}</td>
+                        <td>{{$car->make}}</td>
+                        <td>{{$car->model}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 
 </html>

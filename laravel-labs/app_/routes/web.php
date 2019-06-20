@@ -18,7 +18,15 @@ Route::get('/', function () {
 Route::get('/all', 'CarController@allCars');
 Route::get('/car/{id}', 'CarController@particularCar');
 Route::get('/addCar', 'CarController@addCar');
-Route::post('/newCar', 'CarController@newCar');
+//Route::post('/newCar', 'CarController@newCar');
+
+Route::get('review/details/{id}', 'ReviewController@fetchReviewedCar');
+Route::get('review/{id}', 'ReviewController@fetchReview');
+
+//Resources
+Route::resources([
+    'cars' => 'CarController',
+]);
 
 Auth::routes();
 
