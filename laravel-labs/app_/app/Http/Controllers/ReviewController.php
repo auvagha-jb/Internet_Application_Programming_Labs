@@ -11,7 +11,7 @@ class ReviewController extends Controller
     public function fetchReview($id)
     {
         $reviews = DB::table('reviews')
-            ->where('reviews.id', '=', $id)
+            ->where('reviews.car_id', '=', $id)
             ->get();
         return view('cars.fetchReview')->with('reviews', $reviews);
     }

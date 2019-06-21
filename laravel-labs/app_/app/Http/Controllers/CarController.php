@@ -58,8 +58,7 @@ class CarController extends Controller
         $car->model = $request->input('model');
         $car->produced_on = $this->formatDate($request->input('produced_on'));
         $car->save();
-        dd($request->all());
-        //$this->addCar();
+        return $this->addCar();
     }
 
     public function addCar()
