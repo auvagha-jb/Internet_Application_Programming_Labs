@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2019 at 04:52 PM
+-- Generation Time: Jun 24, 2019 at 06:02 PM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.11
 
@@ -34,6 +34,15 @@ CREATE TABLE `api_keys` (
   `api_key` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `api_keys`
+--
+
+INSERT INTO `api_keys` (`id`, `user_id`, `api_key`) VALUES
+(2, 9, 'aSF3ryHxDnlsvo1YB2cAJpmVGzvgyE0YbcBCMJP5u2oT4CtMk3m6RNgxXhIJsRkd'),
+(3, 2, '82UXFfDzjnDC5PnC67dbjV5bwveSn31KjRp9dmK8SMC4GubITu19DhxTqQkINtMX'),
+(4, 13, '1Xwscg5A3RMieksxygzujs960rHPCq0Zu42V7whyMX1EBKNKeU2Y0eiGlChgK5zG');
+
 -- --------------------------------------------------------
 
 --
@@ -42,11 +51,27 @@ CREATE TABLE `api_keys` (
 
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `order_name` varchar(255) NOT NULL,
   `units` int(11) DEFAULT NULL,
   `unit_price` double(3,2) DEFAULT NULL,
-  `order_status` varchar(32) DEFAULT NULL
+  `order_status` varchar(32) DEFAULT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `user_id`, `order_name`, `units`, `unit_price`, `order_status`, `time`) VALUES
+(1, 9, 'Chicken', 100, 9.99, 'Order Placed', '2019-06-14 13:24:49'),
+(2, 9, 'Chicken Tikka', 200, 9.99, 'Order Placed', '2019-06-14 14:40:11'),
+(3, 9, 'Peri Peri chicken pizza - Large', 1, 9.99, 'Order Placed', '2019-06-19 08:22:47'),
+(4, 9, 'Chicken', 10, 9.99, 'Order Placed', '2019-06-21 14:13:05'),
+(5, 2, 'Chicken', 100, 9.99, 'Order Placed', '2019-06-21 14:18:24'),
+(6, 9, 'Chicken', 100, 9.99, 'Order Placed', '2019-06-24 14:32:15'),
+(7, 9, 'Chicken', 100, 9.99, 'Order Placed', '2019-06-24 14:34:01'),
+(8, 13, 'Chicken', 100, 9.99, 'Order Placed', '2019-06-24 14:34:34');
 
 -- --------------------------------------------------------
 
@@ -82,7 +107,8 @@ INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `user_city`, `username
 (9, 'Alison', 'Becker', 'Novo Hamburgo', 'abecker_13', '$2y$10$7krP6WtjUR5PaTYxfaTUjuiP5c8hxCTSd8uzei6Ahzd3ZhwAg0Ns2', 'th5X624ERK.jpg', '2019-05-08 08:33:42', -180),
 (10, 'Test', 'user', 'Test', 'test3', '$2y$10$5Ow.MqqsSrUCyc9ZHszMe.ixjfupmqJiEeKWWHiTUNhchiuVONY9m', 'th5X624ERK.jpg', '2019-05-08 08:33:42', -180),
 (11, 'Test', 'user', 'test', 'test4', '$2y$10$Jrj0NqAqYQy9kOPjVZdlneiowT2wvQZdZWuxZxQw3cDPwSM3vBiky', 'th5X624ERK.jpg', '2019-05-08 10:09:42', -180),
-(12, 'Test ', 'User', 'test', 'test___', '$2y$10$kApr3if1VtX2sgS1pyJ9futqBGJK7T73skw0QCu32D9BZ1PwGKw8K', 'th5X624ERK.jpg', '2019-05-29 08:15:04', -180);
+(12, 'Test ', 'User', 'test', 'test___', '$2y$10$kApr3if1VtX2sgS1pyJ9futqBGJK7T73skw0QCu32D9BZ1PwGKw8K', 'th5X624ERK.jpg', '2019-05-29 08:15:04', -180),
+(13, 'Test', 'user', 'Nairobi', 'test100', '$2y$10$d.ei2w/MbjzqhxeCm8nojuK9kcK8AVTIXfprJiFcNM2Hc5N/gjanC', 'avatar.png', '2019-06-24 14:33:46', -180);
 
 --
 -- Indexes for dumped tables
@@ -116,19 +142,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `api_keys`
 --
 ALTER TABLE `api_keys`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
