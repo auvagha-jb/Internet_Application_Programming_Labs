@@ -31,6 +31,7 @@
                         <td>{{$car->model}}</td>
                     </tr>
                     @endforeach
+
                 </tbody>
             </table>
         </div>

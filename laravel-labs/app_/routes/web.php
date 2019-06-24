@@ -22,6 +22,9 @@ Route::get('/addCar', 'CarController@addCar');
 
 Route::get('review/details/{id}', 'ReviewController@fetchReviewedCar');
 Route::get('review/{id}', 'ReviewController@fetchReview');
+Route::get('reviews', 'ReviewController@fetchAllReviews');
+Route::post('addReview', 'ReviewController@store');
+
 
 //Resources
 Route::resources([

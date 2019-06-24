@@ -8,7 +8,7 @@ use App\Student;
 class studentController extends Controller
 {
 	public function create(){
-		return view('Amos/student');
+		return view('Jerry/student');
 	}
 
 	public function store(){
@@ -33,8 +33,11 @@ class studentController extends Controller
 		$student = Student::create($student);
 
 		return back()->with('success', 'Student added successfully');
-
-
 	}
-    //
+	
+	function allStudents()
+	{
+		$students = Student::all();
+		return view('Jerry.allStudents')->with('students', $students);
+	}
 }

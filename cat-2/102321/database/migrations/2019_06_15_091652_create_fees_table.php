@@ -18,7 +18,6 @@ class CreateFeesTable extends Migration
              $table->integer('student_no');
             $table->integer('amount');
             $table->date('paid_at');
-            $table->Enum('entry');
             $table->timestamps();
         });
     }

@@ -49,7 +49,7 @@ class CarController extends Controller
         [
 			'make.required' => 'Make is required',
 			'model.required' => 'Model is required',
-            'produced_on.required' => 'Student Number is required',
+            'produced_on.required' => 'Date of production is required',
             'model.unique' => 'This model already exists'
         ]);
 
